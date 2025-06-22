@@ -27,7 +27,17 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 //get all books
 bookRoutes.get("/", async (req: Request, res: Response) => {
   try {
-    const books = await Book.find();
+    const filter = req.query.filter;
+    const sortBy = req.query.sortBy;
+    const limit = req.query.limit;
+    const sort = req.query.sort;
+    let books = await Book.find();
+    console.log(req.query);
+
+    if (filter) {
+      books = await Book.find({ genre: filter });
+    }
+
     res.status(200).json({
       success: true,
       message: "Books retrieved successfully",
@@ -37,7 +47,7 @@ bookRoutes.get("/", async (req: Request, res: Response) => {
     res.status(400).json({
       succuss: false,
       message: "Unable to retrieve books",
-      error: error,
+      error,
     });
   }
 });
