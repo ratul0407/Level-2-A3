@@ -1,8 +1,8 @@
-import { Model, model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
 import { Book } from "./books.model";
 
-const borrowSchema = new Schema<IBorrow, Model<IBorrow>, BorrowQuantity>(
+const borrowSchema = new Schema<IBorrow>(
   {
     book: {
       type: Schema.Types.ObjectId,
