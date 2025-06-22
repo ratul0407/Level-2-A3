@@ -27,42 +27,35 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 //get all books
 bookRoutes.get("/", async (req: Request, res: Response) => {
   try {
-    const {
-      filter, // e.g. genre
-      sortBy, // e.g. createdAt, title
-      sort, // asc | desc
-      limit, // number
-    } = req.query;
+    const { filter, sortBy, sort, limit } = req.query;
 
     const query: any = {};
-
-    // 🟢 Optional filter: genre
     if (filter) {
       query.genre = filter;
     }
-
-    // Start building the mongoose query
-    let dbQuery = Book.find(query);
-
-    // 🟢 Optional sorting
+    let allBooks = Book.find(query);
     if (sortBy) {
       const sortDirection = sort === "desc" ? -1 : 1;
-      dbQuery = dbQuery.sort({ [sortBy as string]: sortDirection });
+      allBooks = allBooks.sort({ [sortBy as string]: sortDirection });
     }
-
-    // 🟢 Optional limit
     if (limit) {
       const parsedLimit = parseInt(limit as string, 10);
       if (!isNaN(parsedLimit)) {
-        dbQuery = dbQuery.limit(parsedLimit);
+        allBooks = allBooks.limit(parsedLimit);
       }
     }
 
-    const books = await dbQuery;
+    const books = await allBooks;
 
-    res.status(200).json(books);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch books", error: err });
+    res.status(200).json({
+      success: true,
+      message: "Books retrieved successfully",
+      data: books,
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ success: false, message: "Failed to retrieve the books", error });
   }
 });
 //get a specific book by it's id

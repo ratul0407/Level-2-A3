@@ -34,7 +34,7 @@ const bookSchema = new Schema<IBook>(
     copies: {
       type: Number,
       required: true,
-      min: [1, "Copies must be of a postive value but got ${VALUE}"],
+      min: [1, "Copies must be of a positive value but got ${VALUE}"],
     },
     available: {
       type: Boolean,
