@@ -1,7 +1,7 @@
 import { Model, model, Schema } from "mongoose";
 import { BookCopies, IBook } from "../interfaces/books.interface";
 
-const bookSchema = new Schema<IBook, Model<IBook>, BookCopies>(
+const bookSchema = new Schema<IBook>(
   {
     title: {
       type: String,
@@ -34,7 +34,7 @@ const bookSchema = new Schema<IBook, Model<IBook>, BookCopies>(
     copies: {
       type: Number,
       required: true,
-      min: [1, "Copies must be of a positive value but got ${VALUE}"],
+      min: [0, "Copies must be of a positive value but got ${VALUE}"],
     },
     available: {
       type: Boolean,
@@ -47,11 +47,4 @@ const bookSchema = new Schema<IBook, Model<IBook>, BookCopies>(
   }
 );
 
-bookSchema.method("reduceCopies", async function (quantity: number) {
-  this.copies -= quantity;
-  if (this.copies == 0) {
-    this.available = false;
-  }
-  await this.save();
-});
 export const Book = model<IBook>("Book", bookSchema);

@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrows.models";
 import { Book } from "../models/books.model";
+import { IBook } from "../interfaces/books.interface";
 
 export const borrowRoutes = express.Router();
 
@@ -17,7 +18,6 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
           message: `only ${book.copies} available cannot borrow ${body.quantity}`,
         });
       } else if (book.copies === body.quantity || book.copies > body.quantity) {
-        await book.reduceCopies(body.quantity);
         const borrow = await new Borrow(body);
         await borrow.save();
 
