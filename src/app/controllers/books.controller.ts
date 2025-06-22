@@ -26,37 +26,43 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 
 //get all books
 bookRoutes.get("/", async (req: Request, res: Response) => {
-  console.log("I was hit");
   try {
-    const { filter, sort, sortBy, limit } = req.query;
-    console.log(req.query);
+    const {
+      filter, // e.g. genre
+      sortBy, // e.g. createdAt, title
+      sort, // asc | desc
+      limit, // number
+    } = req.query;
 
-    let books = await Book.find();
+    const query: any = {};
+
+    // 🟢 Optional filter: genre
     if (filter) {
-      books = await Book.find({ genre: filter });
+      query.genre = filter;
     }
+
+    // Start building the mongoose query
+    let dbQuery = Book.find(query);
+
+    // 🟢 Optional sorting
     if (sortBy) {
-      const sortMethod = sort === "desc" ? -1 : 1;
-      books = books.sort({ [sortBy as string]: sortMethod });
+      const sortDirection = sort === "desc" ? -1 : 1;
+      dbQuery = dbQuery.sort({ [sortBy as string]: sortDirection });
     }
+
+    // 🟢 Optional limit
     if (limit) {
       const parsedLimit = parseInt(limit as string, 10);
       if (!isNaN(parsedLimit)) {
-        books = books.limit(parsedLimit);
+        dbQuery = dbQuery.limit(parsedLimit);
       }
     }
 
-    res.status(200).json({
-      success: true,
-      message: "Books retrieved successfully",
-      data: books,
-    });
-  } catch (error) {
-    res.status(400).json({
-      succuss: false,
-      message: "Unable to retrieve books",
-      error,
-    });
+    const books = await dbQuery;
+
+    res.status(200).json(books);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch books", error: err });
   }
 });
 //get a specific book by it's id
@@ -80,14 +86,25 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response) => {
 
 //update a specific book using it's id
 bookRoutes.put("/:bookId", async (req: Request, res: Response) => {
-  const body = req.body;
-  const bookId = req.params.bookId;
-  const book = await Book.findOneAndUpdate({ _id: bookId }, { new: true });
-  res.status(201).json({
-    success: true,
-    message: "Book updated successfully",
-    data: book,
-  });
+  try {
+    const body = req.body;
+    const bookId = req.params.bookId;
+    const book = await Book.findByIdAndUpdate(bookId, body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(201).json({
+      success: true,
+      message: "Book updated successfully",
+      data: book,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Couldn't update the book",
+      error,
+    });
+  }
 });
 //delete a specific book using it's id
 bookRoutes.delete("/:bookId", async (req: Request, res: Response) => {
