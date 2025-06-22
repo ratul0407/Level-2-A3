@@ -26,16 +26,24 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
 
 //get all books
 bookRoutes.get("/", async (req: Request, res: Response) => {
+  console.log("I was hit");
   try {
-    const filter = req.query.filter;
-    const sortBy = req.query.sortBy;
-    const limit = req.query.limit;
-    const sort = req.query.sort;
-    let books = await Book.find();
+    const { filter, sort, sortBy, limit } = req.query;
     console.log(req.query);
 
+    let books = await Book.find();
     if (filter) {
       books = await Book.find({ genre: filter });
+    }
+    if (sortBy) {
+      const sortMethod = sort === "desc" ? -1 : 1;
+      books = books.sort({ [sortBy as string]: sortMethod });
+    }
+    if (limit) {
+      const parsedLimit = parseInt(limit as string, 10);
+      if (!isNaN(parsedLimit)) {
+        books = books.limit(parsedLimit);
+      }
     }
 
     res.status(200).json({
