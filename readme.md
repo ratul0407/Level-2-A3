@@ -46,3 +46,14 @@ But before you borrow the book the api will check if there is any copy available
 ## GET `/api/borrow`
 
 This route returns the summary of the borrowed books like the totalQuantity borrowed for each book with their title and isbn number.
+
+# How to run this on your machine
+
+To make this code work on your computer you can simply just clone the repo and then type
+
+```
+npm install
+npm run dev
+```
+
+And you'll be good to go.
