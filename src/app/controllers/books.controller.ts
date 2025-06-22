@@ -15,11 +15,11 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
       message: "Book created successfully",
       data: book,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       message: "Validation failed",
       success: false,
-      error: error,
+      error,
     });
   }
 });
@@ -63,6 +63,13 @@ bookRoutes.get("/:bookId", async (req: Request, res: Response) => {
 //update a specific book using it's id
 bookRoutes.put("/:bookId", async (req: Request, res: Response) => {
   const body = req.body;
+  const bookId = req.params.bookId;
+  const book = await Book.findOneAndUpdate({ _id: bookId }, { new: true });
+  res.status(201).json({
+    success: true,
+    message: "Book updated successfully",
+    data: book,
+  });
 });
 //delete a specific book using it's id
 bookRoutes.delete("/:bookId", async (req: Request, res: Response) => {

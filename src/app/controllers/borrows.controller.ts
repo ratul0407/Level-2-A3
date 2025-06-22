@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrows.models";
 
-const borrowRoutes = express.Router();
+export const borrowRoutes = express.Router();
 
 borrowRoutes.post("/", async (req: Request, res: Response) => {
   try {
