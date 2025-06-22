@@ -18,13 +18,12 @@ const zodBookSchema = z.object({
   isbn: z.string(),
   description: z.string(),
   copies: z.number(),
-  available: z.boolean(),
+  available: z.boolean().optional(),
 });
 //post a new book
 bookRoutes.post("/", async (req: Request, res: Response) => {
   try {
     const body = await zodBookSchema.parseAsync(req.body);
-    console.log(body, "zod body");
     const book = await new Book(body);
     await book.save();
 
