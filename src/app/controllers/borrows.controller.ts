@@ -1,12 +1,23 @@
 import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrows.models";
 import { Book } from "../models/books.model";
+import { z } from "zod";
 
 export const borrowRoutes = express.Router();
 
+const zodBorrowSchema = z.object({
+  book: z.string(),
+  quantity: z.number(),
+  dueDate: z
+    .string()
+    .transform((val) => new Date(val))
+    .refine((date) => !isNaN(date.getTime()), {
+      message: "Invalid date format",
+    }),
+});
 borrowRoutes.post("/", async (req: Request, res: Response) => {
   try {
-    const body = req.body;
+    const body = await zodBorrowSchema.parse(req.body);
     console.log(body);
 
     const book = await Book.findById(body.book);

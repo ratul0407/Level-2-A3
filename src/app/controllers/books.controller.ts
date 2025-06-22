@@ -1,12 +1,30 @@
 import express, { Request, Response } from "express";
 import { Book } from "../models/books.model";
+import { z } from "zod";
 
 export const bookRoutes = express.Router();
 
+const zodBookSchema = z.object({
+  title: z.string(),
+  author: z.string(),
+  genre: z.enum([
+    "FICTION",
+    "NON_FICTION",
+    "HISTORY",
+    "SCIENCE",
+    "BIOGRAPHY",
+    "FANTASY",
+  ]),
+  isbn: z.string(),
+  description: z.string(),
+  copies: z.number(),
+  available: z.boolean(),
+});
 //post a new book
 bookRoutes.post("/", async (req: Request, res: Response) => {
   try {
-    const body = req.body;
+    const body = await zodBookSchema.parseAsync(req.body);
+    console.log(body, "zod body");
     const book = await new Book(body);
     await book.save();
 
