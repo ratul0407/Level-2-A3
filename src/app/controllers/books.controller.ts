@@ -99,10 +99,13 @@ bookRoutes.put("/:bookId", async (req: Request, res: Response) => {
   try {
     const body = req.body;
     const bookId = req.params.bookId;
+
     const book = await Book.findByIdAndUpdate(bookId, body, {
       new: true,
       runValidators: true,
     });
+    const TheBook = await Book.findById(bookId);
+    TheBook?.updateAvailable();
     res.status(201).json({
       success: true,
       message: "Book updated successfully",

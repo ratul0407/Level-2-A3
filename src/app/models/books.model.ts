@@ -47,4 +47,15 @@ const bookSchema = new Schema<IBook>(
   }
 );
 
+bookSchema.methods.updateAvailable = function () {
+  console.log("I was here", this.copies === 0, this.copies);
+  if (this.copies === 0) {
+    this.available = false;
+    console.log(this.available);
+  } else if (this.copies > 0) {
+    this.available = true;
+    console.log("I was here", this.available);
+  }
+  return this.save();
+};
 export const Book = model<IBook>("Book", bookSchema);
