@@ -71,6 +71,7 @@ borrowRoutes.get("/", async (req: Request, res: Response) => {
           book: {
             title: "$bookDetails.title",
             isbn: "$bookDetails.isbn",
+            author: "$bookDetails.author",
           },
           totalQuantity: 1,
         },
