@@ -1,4 +1,6 @@
-export interface IBook {
+import { Document, Model } from "mongoose";
+
+export interface IBook extends Document {
   title: string;
   author: string;
   genre:
@@ -13,3 +15,9 @@ export interface IBook {
   copies: number;
   available: boolean;
 }
+
+export interface BookMethods {
+  updateAvailable(): Promise<IBook>;
+}
+
+export type BookModel = Model<IBook, {}, BookMethods>;

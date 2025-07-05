@@ -25,7 +25,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
       if (book.copies < body.quantity) {
         res.status(400).json({
           success: false,
-          message: `only ${book.copies} available cannot borrow ${body.quantity}`,
+          message: `only ${book.copies} copies available cannot borrow ${body.quantity}`,
         });
       } else if (book.copies === body.quantity || book.copies > body.quantity) {
         const borrow = await new Borrow(body);

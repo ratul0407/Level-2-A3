@@ -26,6 +26,9 @@ bookRoutes.post("/", async (req: Request, res: Response) => {
     const body = await zodBookSchema.parseAsync(req.body);
     const book = await new Book(body);
     await book.save();
+    if (book) {
+      book.updateAvailable();
+    }
 
     res.status(201).json({
       success: true,
@@ -105,7 +108,9 @@ bookRoutes.put("/:bookId", async (req: Request, res: Response) => {
       runValidators: true,
     });
     const TheBook = await Book.findById(bookId);
-    TheBook?.updateAvailable();
+    if (TheBook) {
+      await TheBook?.updateAvailable();
+    }
     res.status(201).json({
       success: true,
       message: "Book updated successfully",
